@@ -1,16 +1,11 @@
 provider "azurerm" {
-    features {}
+    features{}
 }
-resource "azurerm_resource_group" "resource_group" {
-    name        = var.rg_name
-    location    = var.location
-    tags        = var.tags
+module "resource_group" {
+    source = "../modules/rg"
 }
-resource "azurerm_storage_account" "example" {
-  name                     = var.st_name
-  resource_group_name      = azurerm_resource_group.resource_group.name
-  location                 = azurerm_resource_group.resource_group.location
-  account_tier             = var.account_tier
-  account_replication_type = var.account_replication_type
-  tags                     = var.tags
+module "storage_account" {
+    source = "../modules/st"
+    depends_on          = [module.resource_group]   
+    resource_group_name = module.resource_group.resource_group_name
 }
